@@ -8,15 +8,21 @@ import {
 } from "@mui/material"
 import Grid from "@mui/material/Unstable_Grid2"
 import { menuList } from "../data/menu"
+import { useCart } from "../context/CartContext"
 
 const Menu = () => {
+  const { addToCart } = useCart()
+
   const handleAddToCart = (food: any) => {
-    console.log("Add to cart:", food)
+    addToCart({
+      id: food.id,
+      name: food.name,
+      price: food.price
+    })
   }
 
   return (
     <Box sx={{ maxWidth: 1200, mx: "auto" }}>
-      {/* Page Title */}
       <Typography
         variant="h4"
         fontWeight="bold"
@@ -43,11 +49,7 @@ const Menu = () => {
               }}
             >
               <CardContent sx={{ flexGrow: 1 }}>
-                <Typography
-                  variant="h6"
-                  fontWeight="bold"
-                  gutterBottom
-                >
+                <Typography variant="h6" fontWeight="bold" gutterBottom>
                   {food.name}
                 </Typography>
 
