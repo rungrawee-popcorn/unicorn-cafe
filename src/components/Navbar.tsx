@@ -1,27 +1,64 @@
-import { AppBar, Toolbar, Typography, Button, Box } from '@mui/material'
-import { Link } from 'react-router-dom'
+import {
+  AppBar,
+  Toolbar,
+  Typography,
+  IconButton,
+  Badge,
+  Box
+} from "@mui/material"
+import ShoppingCartIcon from "@mui/icons-material/ShoppingCart"
+import { useCart } from "../context/CartContext"
+import { Link } from "react-router-dom"
+import { useState } from "react"
+import CartDrawer from "./CartDrawer"
 
 const Navbar = () => {
-  return (
-    <AppBar position="static">
-      <Toolbar>
-        <Typography variant="h6" sx={{ flexGrow: 1 }}>
-          🦄 Unicorn Cafe
-        </Typography>
+  const { totalQuantity } = useCart()
+  const [openCart, setOpenCart] = useState(false)
 
-        <Box>
-          <Button color="inherit" component={Link} to="/">
-            Home
-          </Button>
-          <Button color="inherit" component={Link} to="/menu">
-            Menu
-          </Button>
-          <Button color="inherit" component={Link} to="/cart">
-            Cart
-          </Button>
-        </Box>
-      </Toolbar>
-    </AppBar>
+  return (
+    <>
+      <AppBar position="sticky">
+        <Toolbar>
+          {/* Logo */}
+          <Typography
+            variant="h6"
+            component={Link}
+            to="/"
+            sx={{
+              flexGrow: 1,
+              textDecoration: "none",
+              color: "inherit",
+              fontWeight: "bold"
+            }}
+          >
+            🦄 Unicorn Cafe
+          </Typography>
+
+          {/* Cart Icon */}
+          <Box>
+            <IconButton
+              color="inherit"
+              onClick={() => setOpenCart(true)}
+            >
+              <Badge
+                badgeContent={totalQuantity}
+                color="error"
+                invisible={totalQuantity === 0}
+              >
+                <ShoppingCartIcon />
+              </Badge>
+            </IconButton>
+          </Box>
+        </Toolbar>
+      </AppBar>
+
+      {/* Cart Drawer */}
+      <CartDrawer
+        open={openCart}
+        onClose={() => setOpenCart(false)}
+      />
+    </>
   )
 }
 
