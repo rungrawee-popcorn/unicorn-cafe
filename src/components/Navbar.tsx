@@ -3,61 +3,39 @@ import {
   Toolbar,
   Typography,
   IconButton,
-  Badge,
-  Box
+  Badge
 } from "@mui/material"
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart"
-import { useCart } from "../context/CartContext"
-import { Link } from "react-router-dom"
 import { useState } from "react"
+import { useCart } from "../context/CartContext"
 import CartDrawer from "./CartDrawer"
 
 const Navbar = () => {
-  const { totalQuantity } = useCart()
-  const [openCart, setOpenCart] = useState(false)
+  const { cart } = useCart()
+  const [open, setOpen] = useState(false)
+
+  const totalQty = cart.reduce(
+    (sum, item) => sum + item.qty,
+    0
+  )
 
   return (
     <>
-      <AppBar position="sticky">
+      <AppBar position="static">
         <Toolbar>
-          {/* Logo */}
-          <Typography
-            variant="h6"
-            component={Link}
-            to="/"
-            sx={{
-              flexGrow: 1,
-              textDecoration: "none",
-              color: "inherit",
-              fontWeight: "bold"
-            }}
-          >
+          <Typography variant="h6" sx={{ flexGrow: 1 }}>
             🦄 Unicorn Cafe
           </Typography>
 
-          {/* Cart Icon */}
-          <Box>
-            <IconButton
-              color="inherit"
-              onClick={() => setOpenCart(true)}
-            >
-              <Badge
-                badgeContent={totalQuantity}
-                color="error"
-                invisible={totalQuantity === 0}
-              >
-                <ShoppingCartIcon />
-              </Badge>
-            </IconButton>
-          </Box>
+          <IconButton color="inherit" onClick={() => setOpen(true)}>
+            <Badge badgeContent={totalQty} color="error">
+              <ShoppingCartIcon />
+            </Badge>
+          </IconButton>
         </Toolbar>
       </AppBar>
 
-      {/* Cart Drawer */}
-      <CartDrawer
-        open={openCart}
-        onClose={() => setOpenCart(false)}
-      />
+      <CartDrawer open={open} onClose={() => setOpen(false)} />
     </>
   )
 }
