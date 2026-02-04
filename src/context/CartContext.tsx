@@ -1,5 +1,13 @@
-import React, { createContext, useContext, useState } from "react"
+import React, {
+  createContext,
+  useContext,
+  useEffect,
+  useState
+} from "react"
 
+/* -----------------------------
+  Type ของสินค้าในตะกร้า
+----------------------------- */
 export interface CartItem {
   id: number
   name: string
@@ -7,39 +15,69 @@ export interface CartItem {
   qty: number
 }
 
+/* -----------------------------
+  Type ของ Context
+----------------------------- */
 interface CartContextType {
   cart: CartItem[]
   addToCart: (item: Omit<CartItem, "qty">) => void
   removeFromCart: (id: number) => void
   increaseQty: (id: number) => void
   decreaseQty: (id: number) => void
+  clearCart: () => void
 }
 
+/* -----------------------------
+  สร้าง Context
+----------------------------- */
 const CartContext = createContext<CartContextType | null>(null)
 
+/* -----------------------------
+  Provider
+----------------------------- */
 export const CartProvider = ({
   children
 }: {
   children: React.ReactNode
 }) => {
-  const [cart, setCart] = useState<CartItem[]>([])
+  /* โหลด cart ครั้งแรก */
+  const [cart, setCart] = useState<CartItem[]>(() => {
+    const saved = localStorage.getItem("cart")
+    return saved ? JSON.parse(saved) : []
+  })
 
+  /* sync cart → localStorage */
+  useEffect(() => {
+    if (cart.length === 0) {
+      localStorage.removeItem("cart")
+    } else {
+      localStorage.setItem("cart", JSON.stringify(cart))
+    }
+  }, [cart])
+
+  /* เพิ่มสินค้า */
   const addToCart = (item: Omit<CartItem, "qty">) => {
     setCart((prev) => {
       const found = prev.find((i) => i.id === item.id)
+
       if (found) {
         return prev.map((i) =>
-          i.id === item.id ? { ...i, qty: i.qty + 1 } : i
+          i.id === item.id
+            ? { ...i, qty: i.qty + 1 }
+            : i
         )
       }
+
       return [...prev, { ...item, qty: 1 }]
     })
   }
 
+  /* ลบสินค้า */
   const removeFromCart = (id: number) => {
     setCart((prev) => prev.filter((i) => i.id !== id))
   }
 
+  /* เพิ่มจำนวน */
   const increaseQty = (id: number) => {
     setCart((prev) =>
       prev.map((i) =>
@@ -48,6 +86,7 @@ export const CartProvider = ({
     )
   }
 
+  /* ลดจำนวน */
   const decreaseQty = (id: number) => {
     setCart((prev) =>
       prev
@@ -58,6 +97,11 @@ export const CartProvider = ({
     )
   }
 
+  /* ล้างตะกร้า */
+  const clearCart = () => {
+    setCart([])
+  }
+
   return (
     <CartContext.Provider
       value={{
@@ -65,7 +109,8 @@ export const CartProvider = ({
         addToCart,
         removeFromCart,
         increaseQty,
-        decreaseQty
+        decreaseQty,
+        clearCart
       }}
     >
       {children}
@@ -73,10 +118,15 @@ export const CartProvider = ({
   )
 }
 
+/* -----------------------------
+  Custom Hook
+----------------------------- */
 export const useCart = () => {
   const context = useContext(CartContext)
   if (!context) {
-    throw new Error("useCart must be used within CartProvider")
+    throw new Error(
+      "useCart must be used within CartProvider"
+    )
   }
   return context
 }

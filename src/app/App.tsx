@@ -1,11 +1,18 @@
-import Navbar from "../components/Navbar"
+import { Routes, Route } from "react-router-dom"
 import Menu from "../pages/Menu"
+import Checkout from "../pages/Checkout"
+import Navbar from "../components/Navbar"
+import OrderSuccess from "../pages/OrderSuccess"
 
-const App = () => {
+function App() {
   return (
     <>
       <Navbar />
-      <Menu />
+      <Routes>
+        <Route path="/" element={<Menu />} />
+        <Route path="/checkout" element={<Checkout />} />
+        <Route path="/success" element={<OrderSuccess />} />
+      </Routes>
     </>
   )
 }

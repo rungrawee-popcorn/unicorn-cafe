@@ -7,7 +7,8 @@ import {
   } from "@mui/material"
   import CloseIcon from "@mui/icons-material/Close"
   import { useCart } from "../context/CartContext"
-  
+  import { useNavigate } from "react-router-dom"
+
   interface Props {
     open: boolean
     onClose: () => void
@@ -26,6 +27,8 @@ import {
       0
     )
   
+    const navigate = useNavigate()
+
     return (
       <Drawer anchor="right" open={open} onClose={onClose}>
         <Box sx={{ width: 320, p: 2 }}>
@@ -55,7 +58,7 @@ import {
                   </Typography>
   
                   <Typography>
-                    {item.price} × {item.qty} ={" "}
+                    {item.price} x {item.qty} ={" "}
                     {item.price * item.qty} บาท
                   </Typography>
   
@@ -89,6 +92,17 @@ import {
             </>
           )}
         </Box>
+        <Button
+          variant="contained"
+          fullWidth
+          sx={{ mt: 2 }}
+          onClick={() => {
+            onClose()
+            navigate("/checkout")
+          }}
+        >
+          Go to Checkout
+        </Button>
       </Drawer>
     )
   }
