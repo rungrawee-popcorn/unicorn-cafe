@@ -94,3 +94,7 @@ http://localhost:5173
 - Generate order ID
 - Show order date and payment method
 - Clear cart after order completion
+
+## Live Demo
+
+https://unicorn-cafe.vercel.app/
